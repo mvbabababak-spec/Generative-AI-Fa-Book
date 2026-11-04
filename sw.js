@@ -1,0 +1,4 @@
+const CACHE='genai-book-v1';const A=['/','/index.html','/assets/css/style.css','/assets/js/book-data.js','/assets/js/app.js','/assets/fonts/Vazirmatn-Regular.woff2','/assets/fonts/Vazirmatn-Bold.woff2','/assets/fonts/Vazirmatn-Medium.woff2','/assets/fonts/Vazirmatn-Light.woff2','/manifest.json'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(A)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method==='GET'&&(u.pathname.startsWith('/assets/')||u.pathname==='/'||u.pathname==='/index.html')){e.respondWith(caches.match(e.request).then(c=>{const f=fetch(e.request).then(r=>{if(r&&r.status===200){const rc=r.clone();caches.open(CACHE).then(ca=>ca.put(e.request,rc))}return r}).catch(()=>c);return c||f}))}})
